@@ -294,19 +294,27 @@
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';  
+    ctx.shadowBlur = 50;  
     ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 4;
+    ctx.shadowOffsetY = 0;
     
     const img = polaroid.querySelector('img');
-    ctx.drawImage(img, 424, 400, 1632, 2077); 
+    const imgX = 424;
+    const imgY = 400;
+    const imgWidth = 1632;
+    const imgHeight = 2077;
+
+  
+    ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight); 
     
     const link = document.createElement('a');
     link.download = 'polaroid_' + Date.now() + '.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
 }
+
+
 
 
 
