@@ -1,330 +1,369 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Polaroids</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=100&id=sa0DLzvj6H5i&format=png&color=000000">
-    <style>
-        .polaroid {
-            background: white;
-            padding: 15px 15px 100px 15px; 
-            width: 250px;
-            position: relative;
-            transition: all 0.4s ease;
-            box-shadow: 
-                0 2.8px 2.2px rgba(0, 0, 0, 0.02),
-                0 6.7px 5.3px rgba(0, 0, 0, 0.028),
-                0 12.5px 10px rgba(0, 0, 0, 0.035),
-                0 22.3px 17.9px rgba(0, 0, 0, 0.042),
-                0 41.8px 33.4px rgba(0, 0, 0, 0.05),
-                0 100px 80px rgba(0, 0, 0, 0.07),
-                inset 0 0 5px rgba(0,0,0,0.1); 
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 3px;
-            border-style: dashed;
-            border-width: 0.6px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transformar em Polaroid</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .polaroid:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: 
-                0 5.6px 4.4px rgba(0, 0, 0, 0.03),
-                0 13.4px 10.6px rgba(0, 0, 0, 0.038),
-                0 25px 20px rgba(0, 0, 0, 0.045),
-                0 44.6px 35.8px rgba(0, 0, 0, 0.052),
-                0 83.6px 66.8px rgba(0, 0, 0, 0.06),
-                0 200px 160px rgba(0, 0, 0, 0.08),
-                inset 0 0 5px rgba(0,0,0,0.1);
-        }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-        .polaroid img {
-            width: 100%;
-            height: 280px;
-            object-fit: cover;
-            border-radius: 2px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
+    .container {
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
 
-        .upload-area {
-            border: 3px dashed #dee2e6;
-            transition: all 0.3s ease;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.05),
-                0 4px 8px rgba(0,0,0,0.05);
-                
-        }
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
 
-        .upload-area.dragover {
-            background-color: #f8f9fa;
-            border-color: #0d6efd;
-            box-shadow: 
-                0 4px 8px rgba(0,0,0,0.1),
-                0 8px 16px rgba(0,0,0,0.1);
-        }
+    .upload-section {
+      margin-bottom: 25px;
+    }
 
-        .polaroid-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 40px;
-            justify-content: center;
-            padding: 20px;
-            border-style: dashed;
-            border-width: 0.6px;
-         
-        }
+    .upload-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+      font-size: 16px;
+      font-weight: 500;
+    }
 
-        .save-button {
-            position: absolute;
-            bottom: 35px; 
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
+    .upload-btn:hover {
+      background-color: #0056b3;
+    }
 
-        .save-button:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+    input[type="file"] {
+      display: none;
+    }
 
+    .polaroid-container {
+      margin: 25px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
 
-        .polaroid {
-            background: white;
-            padding: 15px 15px 100px 15px; 
-            width: 250px;
-            position: relative;
-            transition: all 0.4s ease;
-            box-shadow: 
-                0 2.8px 2.2px rgba(0, 0, 0, 0.02),
-                0 6.7px 5.3px rgba(0, 0, 0, 0.028),
-                0 12.5px 10px rgba(0, 0, 0, 0.035),
-                0 22.3px 17.9px rgba(0, 0, 0, 0.042),
-                0 41.8px 33.4px rgba(0, 0, 0, 0.05),
-                0 100px 80px rgba(0, 0, 0, 0.07),
-                inset 0 0 5px rgba(0,0,0,0.1); 
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 3px;
-            border-style: dashed;
-            border-width: 0.6px;
-        }
+    .polaroid {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      transform: rotate(-1deg);
+      max-width: 100%;
+      width: 300px;
+      border: 10px solid black;
+      position: relative;
+    }
 
-        .polaroid:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: 
-                0 5.6px 4.4px rgba(0, 0, 0, 0.03),
-                0 13.4px 10.6px rgba(0, 0, 0, 0.038),
-                0 25px 20px rgba(0, 0, 0, 0.045),
-                0 44.6px 35.8px rgba(0, 0, 0, 0.052),
-                0 83.6px 66.8px rgba(0, 0, 0, 0.06),
-                0 200px 160px rgba(0, 0, 0, 0.08),
-                inset 0 0 5px rgba(0,0,0,0.1);
-        }
+    .polaroid img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin-bottom: 15px;
+      border: 5px solid white;
+    }
 
-        .polaroid img {
-        width: 200px;
-        height: 300px;
-        object-fit: contain;
-        border-radius: 2px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
+    .caption {
+      text-align: center;
+      font-family: 'Caveat', cursive;
+      font-size: 24px;
+      color: #333;
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 8px;
+      background: transparent;
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+    }
 
+    .navigation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
 
+    .nav-btn {
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
 
-        .button-container {
-            position: absolute;
-            bottom: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    .nav-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
 
-        .polaroid:hover .button-container {
-            opacity: 1;
-        }
+    .nav-btn:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
 
-        .control-button {
-            padding: 5px 10px;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            white-space: nowrap;
-        }
+    #imageCounter {
+      font-size: 16px;
+      color: #555;
+      font-weight: 500;
+    }
 
-        .control-button:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+    .actions {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
+    .download-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
 
+    .download-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
 
-    </style>
+    .download-btn:hover:not(:disabled) {
+      background-color: #218838;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .upload-btn, .download-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+
+      .polaroid {
+        width: 100%;
+        max-width: 250px;
+      }
+
+      .caption {
+        font-size: 20px;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
-<body class="bg-light">
-    <div class="container py-5">
-        <h1 class="text-center mb-5">Gerador de Fotos Polaroid</h1>
-        <canvas id="polaroidCanvas" width="2480" height="3508" style="display: none;"></canvas>
-
-
-        <div class="upload-area p-5 mb-4 bg-white rounded" id="dropZone">
-            <div class="text-center">
-                <h2 class="h4 mb-3">Arraste e solte suas fotos aqui</h2>
-                <p class="text-muted">ou</p>
-                <div class="mb-3">
-                    <input class="form-control" type="file" id="fileInput" multiple accept="image/*">
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mb-4">
-            <button class="btn btn-primary btn-lg shadow" id="saveAllButton">
-                Salvar Todas as Fotos
-            </button>
-        </div>
-
-        <div class="polaroid-container" id="polaroidContainer"></div>
+<body>
+  <div class="container">
+    <h1>Transforme suas imagens em Polaroid</h1>
+    <div class="upload-section">
+      <label for="imageInput" class="upload-btn">Escolha uma ou mais imagens</label>
+      <input type="file" id="imageInput" accept="image/*" multiple>
     </div>
+    <div class="polaroid-container">
+      <div class="polaroid">
+        <img id="uploadedImage" src="#" alt="Sua imagem aqui">
+        <input type="text" id="captionInput" placeholder="Digite uma legenda..." class="caption">
+      </div>
+      <div class="navigation">
+        <button id="prevBtn" class="nav-btn" disabled>Anterior</button>
+        <span id="imageCounter"></span>
+        <button id="nextBtn" class="nav-btn" disabled>Próxima</button>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="downloadBtn" class="download-btn" disabled>Salvar Polaroid Atual</button>
+      <button id="downloadAllZipBtn" class="download-btn" disabled>Salvar Todas em ZIP</button>
+      <button id="downloadAllIndividualBtn" class="download-btn" disabled>Salvar Todas Individualmente</button>
+    </div>
+  </div>
+  <script>
+    let images = [];
+    let currentIndex = 0;
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const polaroidContainer = document.getElementById('polaroidContainer');
-        const saveAllButton = document.getElementById('saveAllButton');
-
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
-
-
-        function createPolaroid(file) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const polaroid = document.createElement('div');
-                polaroid.className = 'polaroid';
-                
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'button-container';
-                
-                const saveButton = document.createElement('button');
-                saveButton.className = 'btn btn-primary control-button';
-                saveButton.textContent = 'Salvar';
-                saveButton.onclick = () => savePolaroid(polaroid);
-                
-                const adjustButton = document.createElement('button');
-                adjustButton.className = 'btn btn-secondary control-button';
-                adjustButton.textContent = 'Ajustar';
-                adjustButton.onclick = () => toggleFit(img);
-                
-                const removeButton = document.createElement('button');
-                removeButton.className = 'btn btn-danger control-button';
-                removeButton.textContent = 'Remover';
-                removeButton.onclick = () => polaroid.remove();
-                
-                buttonContainer.appendChild(saveButton);
-                buttonContainer.appendChild(adjustButton);
-                buttonContainer.appendChild(removeButton);
-                
-                polaroid.appendChild(img);
-                polaroid.appendChild(buttonContainer);
-                polaroidContainer.appendChild(polaroid);
-            };
-            
-            reader.readAsDataURL(file);
-        }
-
-        function toggleFit(img) {
-            if (img.style.objectFit === 'cover') {
-                img.style.objectFit = 'contain';
-            } else {
-                img.style.objectFit = 'cover';
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+      const files = event.target.files;
+      if (files.length > 0) {
+        images = [];
+        for (let i = 0; i < files.length; i++) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            images.push({ src: e.target.result, caption: '' });
+            if (images.length === files.length) {
+              showImage(currentIndex);
+              updateNavigation();
+              document.getElementById('downloadBtn').disabled = false;
+              document.getElementById('downloadAllZipBtn').disabled = false;
+              document.getElementById('downloadAllIndividualBtn').disabled = false;
             }
+          };
+          reader.readAsDataURL(files[i]);
         }
+      }
+    });
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    function showImage(index) {
+      const img = document.getElementById('uploadedImage');
+      img.src = images[index].src;
+      img.style.display = 'block';
+      document.getElementById('captionInput').value = images[index].caption;
+      updateImageCounter();
+    }
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
+    function updateImageCounter() {
+      document.getElementById('imageCounter').textContent = `${currentIndex + 1} / ${images.length}`;
+    }
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
+    function updateNavigation() {
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').disabled = currentIndex === images.length - 1;
+    }
 
-        function highlight(e) {
-            dropZone.classList.add('dragover');
-        }
+    document.getElementById('prevBtn').addEventListener('click', function() {
+      if (currentIndex > 0) {
+        saveCaption();
+        currentIndex--;
+        showImage(currentIndex);
+        updateNavigation();
+      }
+    });
 
-        function unhighlight(e) {
-            dropZone.classList.remove('dragover');
-        }
+    document.getElementById('nextBtn').addEventListener('click', function() {
+      if (currentIndex < images.length - 1) {
+        saveCaption();
+        currentIndex++;
+        showImage(currentIndex);
+        updateNavigation();
+      }
+    });
 
-        dropZone.addEventListener('drop', handleDrop, false);
-        fileInput.addEventListener('change', handleFiles, false);
+    document.getElementById('captionInput').addEventListener('input', function() {
+      saveCaption();
+    });
 
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            handleFiles({ target: { files } });
-        }
+    function saveCaption() {
+      if (images[currentIndex]) {
+        images[currentIndex].caption = document.getElementById('captionInput').value;
+      }
+    }
 
-        function handleFiles(e) {
-            const files = [...e.target.files];
-            files.forEach(createPolaroid);
-        }
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+      savePolaroid(images[currentIndex].src, images[currentIndex].caption, `polaroid_${currentIndex + 1}.png`);
+    });
+
+    document.getElementById('downloadAllZipBtn').addEventListener('click', function() {
+      const zip = new JSZip();
+      images.forEach((image, index) => {
+        const canvas = createPolaroidCanvas(image.src, image.caption);
+        canvas.toBlob(function(blob) {
+          zip.file(`polaroid_${index + 1}.png`, blob);
+          if (index === images.length - 1) {
+            zip.generateAsync({ type: 'blob' }).then(function(content) {
+              saveAs(content, 'polaroids.zip');
+            });
+          }
+        }, 'image/png');
+      });
+    });
+
+    document.getElementById('downloadAllIndividualBtn').addEventListener('click', function() {
+      images.forEach((image, index) => {
+        savePolaroid(image.src, image.caption, `polaroid_${index + 1}.png`);
+      });
+    });
+
+    function savePolaroid(src, caption, filename) {
+      const canvas = createPolaroidCanvas(src, caption);
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function createPolaroidCanvas(src, caption) {
+      const polaroid = document.querySelector('.polaroid');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+   
+      const scale = 4; 
+      canvas.width = polaroid.offsetWidth * scale;
+      canvas.height = polaroid.offsetHeight * scale;
 
       
+      ctx.scale(scale, scale);
 
-        function savePolaroid(polaroid) {
-    const canvas = document.getElementById('polaroidCanvas');
-    const ctx = canvas.getContext('2d');
     
-    canvas.width = 2480;
-    canvas.height = 3508;
-    
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';  
-    ctx.shadowBlur = 50;  
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    
-    const img = polaroid.querySelector('img');
-    const imgX = 424;
-    const imgY = 400;
-    const imgWidth = 1632;
-    const imgHeight = 2077;
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, polaroid.offsetWidth, polaroid.offsetHeight);
 
-  
-    ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight); 
-    
-    const link = document.createElement('a');
-    link.download = 'polaroid_' + Date.now() + '.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-}
+      
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 10; 
+      ctx.strokeRect(0, 0, polaroid.offsetWidth, polaroid.offsetHeight);
 
+      
+      const img = new Image();
+      img.src = src;
+      const imgWidth = polaroid.offsetWidth - 30; 
+      const imgHeight = polaroid.offsetHeight - 80; 
+      ctx.drawImage(img, 15, 15, imgWidth, imgHeight);
 
+      
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(15, 15, imgWidth, imgHeight);
 
+     
+      ctx.font = '24px Caveat, cursive'; 
+      ctx.fillStyle = '#333';
+      ctx.textAlign = 'center';
+      ctx.fillText(caption, polaroid.offsetWidth / 2, polaroid.offsetHeight - 30);
 
-
-
-        saveAllButton.onclick = function() {
-            const polaroids = document.querySelectorAll('.polaroid');
-            polaroids.forEach((polaroid, index) => {
-                setTimeout(() => savePolaroid(polaroid), index * 500);
-            });
-        };
-    </script>
+      return canvas;
+    }
+  </script>
 </body>
 </html>
