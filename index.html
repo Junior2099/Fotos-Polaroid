@@ -220,6 +220,8 @@
       <button id="downloadAllIndividualBtn" class="download-btn" disabled>Salvar Todas Individualmente</button>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script>
     let images = [];
     let currentIndex = 0;
@@ -294,71 +296,69 @@
       savePolaroid(images[currentIndex].src, images[currentIndex].caption, `polaroid_${currentIndex + 1}.png`);
     });
 
-    document.getElementById('downloadAllZipBtn').addEventListener('click', function() {
+    document.getElementById('downloadAllZipBtn').addEventListener('click', async function() {
       const zip = new JSZip();
-      images.forEach((image, index) => {
-        const canvas = createPolaroidCanvas(image.src, image.caption);
-        canvas.toBlob(function(blob) {
-          zip.file(`polaroid_${index + 1}.png`, blob);
-          if (index === images.length - 1) {
-            zip.generateAsync({ type: 'blob' }).then(function(content) {
-              saveAs(content, 'polaroids.zip');
-            });
-          }
-        }, 'image/png');
-      });
+      for (let i = 0; i < images.length; i++) {
+        const canvas = await createPolaroidCanvas(images[i].src, images[i].caption);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        zip.file(`polaroid_${i + 1}.png`, blob);
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'polaroids.zip');
     });
 
-    document.getElementById('downloadAllIndividualBtn').addEventListener('click', function() {
-      images.forEach((image, index) => {
-        savePolaroid(image.src, image.caption, `polaroid_${index + 1}.png`);
-      });
+    document.getElementById('downloadAllIndividualBtn').addEventListener('click', async function() {
+      for (let i = 0; i < images.length; i++) {
+        const canvas = await createPolaroidCanvas(images[i].src, images[i].caption);
+        const link = document.createElement('a');
+        link.download = `polaroid_${i + 1}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
     });
 
-    function savePolaroid(src, caption, filename) {
-      const canvas = createPolaroidCanvas(src, caption);
-      const link = document.createElement('a');
-      link.download = filename;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    }
-
-    function createPolaroidCanvas(src, caption) {
+    async function createPolaroidCanvas(src, caption) {
       const polaroid = document.querySelector('.polaroid');
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-   
-      const scale = 4; 
+      const scale = 4; // Aumenta a resolução da imagem
       canvas.width = polaroid.offsetWidth * scale;
       canvas.height = polaroid.offsetHeight * scale;
 
-      
       ctx.scale(scale, scale);
 
-    
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, polaroid.offsetWidth, polaroid.offsetHeight);
 
-      
+  
       ctx.strokeStyle = 'black';
-      ctx.lineWidth = 10; 
+      ctx.lineWidth = 10;
       ctx.strokeRect(0, 0, polaroid.offsetWidth, polaroid.offsetHeight);
 
-      
+ 
       const img = new Image();
       img.src = src;
-      const imgWidth = polaroid.offsetWidth - 30; 
-      const imgHeight = polaroid.offsetHeight - 80; 
-      ctx.drawImage(img, 15, 15, imgWidth, imgHeight);
+      await new Promise(resolve => (img.onload = resolve));
 
-      
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 5;
-      ctx.strokeRect(15, 15, imgWidth, imgHeight);
+ 
+      const maxWidth = polaroid.offsetWidth - 30; 
+      const maxHeight = polaroid.offsetHeight - 80; 
+      const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+      const width = img.width * ratio;
+      const height = img.height * ratio;
+      const x = (polaroid.offsetWidth - width) / 2;
+      const y = 15; 
 
      
-      ctx.font = '24px Caveat, cursive'; 
+      ctx.drawImage(img, x, y, width, height);
+
+ 
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(x, y, width, height);
+
+      ctx.font = '24px Caveat, cursive';
       ctx.fillStyle = '#333';
       ctx.textAlign = 'center';
       ctx.fillText(caption, polaroid.offsetWidth / 2, polaroid.offsetHeight - 30);
