@@ -12,7 +12,7 @@
       padding: 0;
       box-sizing: border-box;
     }
-
+    
     body {
       font-family: 'Arial', sans-serif;
       background-color: #f8f9fa;
@@ -22,7 +22,7 @@
       min-height: 100vh;
       padding: 20px;
     }
-
+    
     .container {
       background-color: #ffffff;
       border-radius: 12px;
@@ -32,18 +32,18 @@
       width: 100%;
       text-align: center;
     }
-
+    
     h1 {
       font-size: 28px;
       color: #333;
       margin-bottom: 20px;
       font-weight: 600;
     }
-
+    
     .upload-section {
       margin-bottom: 25px;
     }
-
+    
     .upload-btn {
       background-color: #007bff;
       color: white;
@@ -51,19 +51,25 @@
       border-radius: 8px;
       cursor: pointer;
       display: inline-block;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
       font-size: 16px;
       font-weight: 500;
+      border: none;
     }
-
+    
     .upload-btn:hover {
       background-color: #0056b3;
+      transform: translateY(-2px);
     }
-
+    
+    .upload-btn:active {
+      transform: translateY(0);
+    }
+    
     input[type="file"] {
       display: none;
     }
-
+    
     .polaroid-container {
       margin: 25px 0;
       display: flex;
@@ -71,27 +77,33 @@
       align-items: center;
       gap: 20px;
     }
-
+    
     .polaroid {
       background-color: white;
-      padding: 20px;
+      padding: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       display: inline-block;
       transform: rotate(-1deg);
       max-width: 100%;
       width: 300px;
-      border: 10px solid black;
+      border: 10px solid #f8f9fa;
       position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
+    
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    
     .polaroid img {
       max-width: 100%;
       height: auto;
       display: block;
-      margin-bottom: 15px;
       border: 5px solid white;
+      background-color: white;
     }
-
+    
     .caption {
       text-align: center;
       font-family: 'Caveat', cursive;
@@ -105,8 +117,13 @@
       position: absolute;
       bottom: 15px;
       left: 0;
+      transition: color 0.3s ease;
     }
-
+    
+    .caption:focus {
+      color: #007bff;
+    }
+    
     .navigation {
       display: flex;
       justify-content: center;
@@ -114,7 +131,7 @@
       gap: 15px;
       margin-top: 20px;
     }
-
+    
     .nav-btn {
       background-color: #007bff;
       color: white;
@@ -123,24 +140,29 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
-
+    
     .nav-btn:disabled {
       background-color: #cccccc;
       cursor: not-allowed;
     }
-
+    
     .nav-btn:hover:not(:disabled) {
       background-color: #0056b3;
+      transform: translateY(-2px);
     }
-
+    
+    .nav-btn:active {
+      transform: translateY(0);
+    }
+    
     #imageCounter {
       font-size: 16px;
       color: #555;
       font-weight: 500;
     }
-
+    
     .actions {
       margin-top: 25px;
       display: flex;
@@ -148,7 +170,7 @@
       gap: 15px;
       flex-wrap: wrap;
     }
-
+    
     .download-btn {
       background-color: #28a745;
       color: white;
@@ -158,43 +180,48 @@
       cursor: pointer;
       font-size: 16px;
       font-weight: 500;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
-
+    
     .download-btn:disabled {
       background-color: #cccccc;
       cursor: not-allowed;
     }
-
+    
     .download-btn:hover:not(:disabled) {
       background-color: #218838;
+      transform: translateY(-2px);
     }
-
+    
+    .download-btn:active {
+      transform: translateY(0);
+    }
+    
     @media (max-width: 600px) {
       h1 {
         font-size: 24px;
       }
-
+    
       .upload-btn, .download-btn {
         padding: 10px 20px;
         font-size: 14px;
       }
-
+    
       .polaroid {
         width: 100%;
         max-width: 250px;
       }
-
+    
       .caption {
         font-size: 20px;
       }
-
+    
       .actions {
         flex-direction: column;
         gap: 10px;
       }
     }
-  </style>
+      </style>
 </head>
 <body>
   <div class="container">
@@ -215,9 +242,8 @@
       </div>
     </div>
     <div class="actions">
-      <button id="downloadBtn" class="download-btn" disabled>Salvar Polaroid Atual</button>
-      <button id="downloadAllZipBtn" class="download-btn" disabled>Salvar Todas em ZIP</button>
-      <button id="downloadAllIndividualBtn" class="download-btn" disabled>Salvar Todas Individualmente</button>
+      <button id="downloadAllZipBtn" class="download-btn" disabled style="display: none;">Salvar Todas em ZIP</button>
+      <button id="downloadAllIndividualBtn" class="download-btn" disabled>Salvar Todas</button>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
@@ -237,7 +263,6 @@
             if (images.length === files.length) {
               showImage(currentIndex);
               updateNavigation();
-              document.getElementById('downloadBtn').disabled = false;
               document.getElementById('downloadAllZipBtn').disabled = false;
               document.getElementById('downloadAllIndividualBtn').disabled = false;
             }
@@ -292,15 +317,11 @@
       }
     }
 
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-      savePolaroid(images[currentIndex].src, images[currentIndex].caption, `polaroid_${currentIndex + 1}.png`);
-    });
-
     document.getElementById('downloadAllZipBtn').addEventListener('click', async function() {
       const zip = new JSZip();
       for (let i = 0; i < images.length; i++) {
         const canvas = await createPolaroidCanvas(images[i].src, images[i].caption);
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 9.0)); 
         zip.file(`polaroid_${i + 1}.png`, blob);
       }
       const content = await zip.generateAsync({ type: 'blob' });
@@ -312,57 +333,75 @@
         const canvas = await createPolaroidCanvas(images[i].src, images[i].caption);
         const link = document.createElement('a');
         link.download = `polaroid_${i + 1}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = canvas.toDataURL('image/png', 1.0); 
         link.click();
       }
     });
+
+
+window.addEventListener('load', function() {
+  document.getElementById('captionInput').value = ''; 
+});
 
     async function createPolaroidCanvas(src, caption) {
       const polaroid = document.querySelector('.polaroid');
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      const scale = 4; // Aumenta a resolução da imagem
-      canvas.width = polaroid.offsetWidth * scale;
-      canvas.height = polaroid.offsetHeight * scale;
 
-      ctx.scale(scale, scale);
-
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, polaroid.offsetWidth, polaroid.offsetHeight);
-
-  
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(0, 0, polaroid.offsetWidth, polaroid.offsetHeight);
-
- 
       const img = new Image();
       img.src = src;
       await new Promise(resolve => (img.onload = resolve));
 
- 
-      const maxWidth = polaroid.offsetWidth - 30; 
-      const maxHeight = polaroid.offsetHeight - 80; 
+  
+      const polaroidWidth = 300; 
+      const polaroidHeight = 400; 
+
+   
+      const scale = 10; 
+      canvas.width = polaroidWidth * scale;
+      canvas.height = polaroidHeight * scale;
+
+
+      ctx.scale(scale, scale);
+
+
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, polaroidWidth, polaroidHeight);
+
+
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(0, 0, polaroidWidth, polaroidHeight);
+
+     
+      const imageAreaHeight = polaroidHeight - 80; 
+      const maxWidth = polaroidWidth - 30; 
+      const maxHeight = imageAreaHeight - 30; 
+
+
       const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
       const width = img.width * ratio;
       const height = img.height * ratio;
-      const x = (polaroid.offsetWidth - width) / 2;
+      const x = (polaroidWidth - width) / 2;
       const y = 15; 
 
-     
+
       ctx.drawImage(img, x, y, width, height);
 
- 
+  
       ctx.strokeStyle = 'white';
       ctx.lineWidth = 5;
       ctx.strokeRect(x, y, width, height);
 
+
       ctx.font = '24px Caveat, cursive';
       ctx.fillStyle = '#333';
       ctx.textAlign = 'center';
-      ctx.fillText(caption, polaroid.offsetWidth / 2, polaroid.offsetHeight - 30);
+      ctx.fillText(caption, polaroidWidth / 2, polaroidHeight - 30);
 
+
+      
       return canvas;
     }
   </script>
