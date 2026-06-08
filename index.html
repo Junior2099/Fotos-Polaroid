@@ -80,7 +80,7 @@
     
     .polaroid {
       background-color: white;
-      padding: 15px;
+      padding: 15px 8px 4px 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       display: inline-block;
       transform: rotate(-1deg);
@@ -112,11 +112,11 @@
       width: 100%;
       border: none;
       outline: none;
-      padding: 8px;
+      padding: 2px 4px;
       background: transparent;
-      position: absolute;
-      bottom: 15px;
-      left: 0;
+      position: relative;
+      display: block;
+      margin-top: 3px;
       transition: color 0.3s ease;
     }
     
@@ -377,9 +377,9 @@ window.addEventListener('load', function() {
       ctx.strokeRect(0, 0, polaroidWidth, polaroidHeight);
 
      
-      const imageAreaHeight = polaroidHeight - 80; 
-      const maxWidth = polaroidWidth - 30; 
-      const maxHeight = imageAreaHeight - 30; 
+      const imageAreaHeight = polaroidHeight - 38; 
+      const maxWidth = polaroidWidth - 16; 
+      const maxHeight = imageAreaHeight - 16; 
 
 
       const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
@@ -400,7 +400,7 @@ window.addEventListener('load', function() {
       ctx.font = '24px Caveat, cursive';
       ctx.fillStyle = '#333';
       ctx.textAlign = 'center';
-      ctx.fillText(caption, polaroidWidth / 2, polaroidHeight - 30);
+      ctx.fillText(caption, polaroidWidth / 2, polaroidHeight - 10);
 
 
       
